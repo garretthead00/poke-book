@@ -2,9 +2,9 @@ const POKE_API_URL = "https://pokeapi.co/api/v2";
 
 export const getPokemon = async () => {
   try {
-    const res = await fetch(`${POKE_API_URL}/pokemon`);    
+    const res = await fetch(`${POKE_API_URL}/pokemon`);
     const json = await res.json();
-    const next = json?.next
+    const next = json?.next;
     const pokemonResults = json?.results;
 
     let pokemonPayload = [];
@@ -23,7 +23,7 @@ export const getPokemonWithUrl = async (url) => {
   try {
     const res = await fetch(url);
     const json = await res.json();
-    const next = json?.next
+    const next = json?.next;
     const pokemonResults = json?.results;
 
     let pokemonPayload = [];
@@ -36,8 +36,7 @@ export const getPokemonWithUrl = async (url) => {
   } catch (err) {
     console.error("ERROR driverFn: getPokemonWithUrl. ", err);
   }
-}
-
+};
 
 export const getPokemonWithKey = async (key) => {
   try {

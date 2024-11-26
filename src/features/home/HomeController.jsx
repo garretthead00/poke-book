@@ -1,30 +1,34 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import ScrollableGrid from "../../components/scrollable-grid/ScrollableGrid";
-import { fetchPokemon, fetchMorePokemon } from "../../api/poke/poke-service";
+import DetailsPanel from "./components/DetailsPanel";
+import { fetchRandomSortPokemon } from "../../api/poke/poke-service";
 
 import { PokeContext } from "../../context/PokeContext";
 
 const HomeController = () => {
   const { loadedFeedPokemon, setLoadedFeedPokemon } = useContext(PokeContext);
 
-  const [nextUrl, setNextUrl] = useState(null);
+  const [showDetailsPanel, setShowDetailsPanel] = useState(false);
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
 
   useEffect(() => {
     loadPokemon();
   }, []);
 
   const loadPokemon = async () => {
-    const { pokemonPayload, next } = await fetchPokemon();
+    const { pokemonPayload } = await fetchRandomSortPokemon();
+    console.log("loadPokemon: pokemonPayload -> ", pokemonPayload);
     setLoadedFeedPokemon(pokemonPayload);
-    setNextUrl(next);
   };
 
   const loadMore = async () => {
-    if (nextUrl && nextUrl !== "") {
-      const { pokemonPayload, next } = await fetchMorePokemon(nextUrl);
-      setNextUrl(next);
-      setLoadedFeedPokemon([...loadedFeedPokemon, ...pokemonPayload]);
-    }
+    const { pokemonPayload } = await fetchRandomSortPokemon();
+    setLoadedFeedPokemon([...loadedFeedPokemon, ...pokemonPayload]);
+  };
+
+  const toggleDetailsPanel = (selectedPokemon) => {
+    setShowDetailsPanel(!selectedPokemon ? false : true);
+    setSelectedPokemon(!selectedPokemon ? null : selectedPokemon);
   };
 
   if (!loadedFeedPokemon) {
@@ -40,7 +44,9 @@ const HomeController = () => {
       <ScrollableGrid
         contents={loadedFeedPokemon}
         loadMoreContents={loadMore}
+        selectCard={toggleDetailsPanel}
       />
+      {showDetailsPanel && <DetailsPanel pokemon={selectedPokemon} closePanel={() => setShowDetailsPanel(false)}/>}
     </div>
   );
 };
